@@ -81,7 +81,7 @@ public class SnapshotResponse extends BaseResponse implements ControlledEntityRe
     private String intervalType;
 
     @SerializedName(ApiConstants.LOCATION_TYPE)
-    @Param(description = "valid location types are primary and secondary.")
+    @Param(description = "valid location types are primary, secondary and customtarget.")
     private String locationType;
 
     @SerializedName(ApiConstants.STATE)

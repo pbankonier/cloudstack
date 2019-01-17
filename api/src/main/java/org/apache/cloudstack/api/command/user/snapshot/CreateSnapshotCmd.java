@@ -73,7 +73,7 @@ public class CreateSnapshotCmd extends BaseAsyncCreateCmd {
     private Boolean quiescevm;
 
     @Parameter(name = ApiConstants.LOCATION_TYPE, type = CommandType.STRING, required = false, description = "Currently applicable only for managed storage. " +
-            "Valid location types: 'primary', 'secondary'. Default = 'primary'.")
+            "Valid location types: 'primary', 'secondary' and 'customtarget'. Default = 'primary'.")
     private String locationType;
 
     @Parameter(name = ApiConstants.NAME, type = CommandType.STRING, description = "the name of the snapshot")
@@ -220,7 +220,7 @@ public class CreateSnapshotCmd extends BaseAsyncCreateCmd {
             return Snapshot.LocationType.valueOf(lType);
         } catch (IllegalArgumentException e) {
             String errMesg = "Invalid locationType " + locationType + "Specified for volume " + getVolumeId()
-                        + " Valid values are: primary,secondary ";
+                        + " Valid values are: primary,secondary,customtarget ";
             s_logger.warn(errMesg);
             throw  new CloudRuntimeException(errMesg);
         }

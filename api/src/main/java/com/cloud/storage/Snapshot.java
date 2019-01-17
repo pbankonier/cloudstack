@@ -67,7 +67,7 @@ public interface Snapshot extends ControlledEntity, Identity, InternalIdentity, 
     }
 
     enum LocationType {
-        PRIMARY, SECONDARY
+        PRIMARY, SECONDARY, CUSTOMTARGET
     }
 
     public static final long MANUAL_POLICY_ID = 0L;
