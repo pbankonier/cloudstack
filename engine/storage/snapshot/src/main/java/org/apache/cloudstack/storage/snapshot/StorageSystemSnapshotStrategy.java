@@ -114,7 +114,7 @@ public class StorageSystemSnapshotStrategy extends SnapshotStrategyBase {
     public SnapshotInfo backupSnapshot(SnapshotInfo snapshotInfo) {
         Preconditions.checkArgument(snapshotInfo != null, "'snapshotInfo' cannot be 'null'.");
 
-        if (snapshotInfo.getLocationType() != Snapshot.LocationType.SECONDARY) {
+        if (snapshotInfo.getLocationType() == Snapshot.LocationType.PRIMARY ) {
             markAsBackedUp((SnapshotObject)snapshotInfo);
 
             return snapshotInfo;
@@ -273,10 +273,6 @@ public class StorageSystemSnapshotStrategy extends SnapshotStrategyBase {
 
     private void verifyLocationType(SnapshotInfo snapshotInfo) {
         VolumeInfo volumeInfo = snapshotInfo.getBaseVolume();
-
-        if (snapshotInfo.getLocationType() == Snapshot.LocationType.SECONDARY && volumeInfo.getFormat() != ImageFormat.VHD) {
-            throw new CloudRuntimeException("Only the '" + ImageFormat.VHD + "' image type can be used when 'LocationType' is set to 'SECONDARY'.");
-        }
     }
 
     private boolean getHypervisorRequiresResignature(VolumeInfo volumeInfo) {
