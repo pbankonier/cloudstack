@@ -996,7 +996,7 @@ public class SolidFireUtil {
     }
 
     public static void startBulkVolumeRead(SolidFireConnection sfConnection, long volumeId,
-        final Map<String, String> writeParameters) {
+        String volumeName, final Map<String, String> writeParameters) {
 
         ListSnapshotsRequest snapshotRequest = ListSnapshotsRequest.builder()
             .optionalVolumeID(volumeId)
@@ -1009,7 +1009,7 @@ public class SolidFireUtil {
         rangeParameters.put("lba", 0);
         rangeParameters.put("blocks", 262144);
 
-        writeParameters.put("prefix", "hci-cl01-nhjj/ROOT-" + latestSnapshotId + "-" + volumeId);
+        writeParameters.put("prefix", "hci-cl01-nhjj/" + volumeName + "-" + volumeId);
         writeParameters.put("endpoint", "s3");
         writeParameters.put("format", "native");
 
@@ -1018,7 +1018,7 @@ public class SolidFireUtil {
         scriptParameters.put("write", writeParameters);
 
         StartBulkVolumeReadRequest request = StartBulkVolumeReadRequest.builder()
-            .format("uncompressed")
+            .format("native")
             .volumeID(volumeId)
             .optionalSnapshotID(latestSnapshotId)
             .optionalScript("bv_internal.py")

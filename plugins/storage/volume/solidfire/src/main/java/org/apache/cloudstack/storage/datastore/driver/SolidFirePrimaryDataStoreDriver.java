@@ -924,7 +924,7 @@ public class SolidFirePrimaryDataStoreDriver implements PrimaryDataStoreDriver {
                     s3Parameters.put("awsAccessKeyID", _configDao.getValue("s3.access.key.id"));
                     s3Parameters.put("awsSecretAccessKey", _configDao.getValue("s3.secret.access.key"));
                     s3Parameters.put("bucket", _configDao.getValue("s3.bucket"));
-                    SolidFireUtil.startBulkVolumeRead(sfConnection, sfVolumeId, s3Parameters);
+                    SolidFireUtil.startBulkVolumeRead(sfConnection, sfVolumeId, volumeInfo.getName(), s3Parameters);
                 }
 
                 updateSnapshotDetails(snapshotInfo.getId(), volumeInfo.getId(), sfVolumeId, sfNewSnapshotId, storagePoolId, sfVolumeSize);
