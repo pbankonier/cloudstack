@@ -114,7 +114,7 @@ public class StorageSystemSnapshotStrategy extends SnapshotStrategyBase {
     public SnapshotInfo backupSnapshot(SnapshotInfo snapshotInfo) {
         Preconditions.checkArgument(snapshotInfo != null, "'snapshotInfo' cannot be 'null'.");
 
-        if (snapshotInfo.getLocationType() == Snapshot.LocationType.PRIMARY ) {
+        if (snapshotInfo.getLocationType() != Snapshot.LocationType.SECONDARY) {
             markAsBackedUp((SnapshotObject)snapshotInfo);
 
             return snapshotInfo;
