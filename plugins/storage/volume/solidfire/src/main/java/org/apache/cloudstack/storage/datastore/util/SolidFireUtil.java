@@ -55,6 +55,7 @@ import com.solidfire.element.api.RollbackToSnapshotRequest;
 import com.solidfire.element.api.Snapshot;
 import com.solidfire.element.api.SolidFireElement;
 import com.solidfire.element.api.StartBulkVolumeReadRequest;
+import com.solidfire.element.api.StartBulkVolumeWriteRequest;
 import com.solidfire.element.api.Volume;
 import com.solidfire.element.api.VolumeAccessGroup;
 import com.solidfire.jsvcgen.javautil.Optional;
@@ -143,6 +144,11 @@ public class SolidFireUtil {
 
     private static final int MAX_NUM_VAGS_PER_VOLUME = 4;
     private static final int MAX_NUM_INITIATORS_PER_VAG = 64;
+
+    private static final String S3_PREFIX = "hci-cl01-nhjj/";
+    private static final String S3_ENDPOINT = "s3";
+    private static final String S3_FORMAT = "native";
+
 
     public static class SolidFireConnection {
         private final String _managementVip;
@@ -995,8 +1001,25 @@ public class SolidFireUtil {
         return getSolidFireElement(sfConnection).createSnapshot(request).getSnapshotID();
     }
 
+    private static Map<String, Object> buildScriptParameters(final long volumeId, final String volumeName,
+        final Map<String, String> parameters, Boolean hasWriteParameters) {
+        Map<String, Integer> rangeParameters = new HashMap<>();
+        rangeParameters.put("lba", 0);
+        rangeParameters.put("blocks", 262144);
+
+        parameters.put("prefix", S3_PREFIX + volumeName + "-" + volumeId);
+        parameters.put("endpoint", S3_ENDPOINT);
+        parameters.put("format", S3_FORMAT);
+
+        Map<String, Object> scriptParameters = new HashMap<>();
+        scriptParameters.put("range", rangeParameters);
+        scriptParameters.put(hasWriteParameters ? "write" : "read", parameters);
+
+        return scriptParameters;
+    }
+
     public static void startBulkVolumeRead(SolidFireConnection sfConnection, long volumeId,
-        String volumeName, final Map<String, String> writeParameters) {
+        String volumeName, final Map<String, String> parameters) {
 
         ListSnapshotsRequest snapshotRequest = ListSnapshotsRequest.builder()
             .optionalVolumeID(volumeId)
@@ -1005,20 +1028,10 @@ public class SolidFireUtil {
         Snapshot[] snapshots = getSolidFireElement(sfConnection).listSnapshots(snapshotRequest).getSnapshots();
         Long latestSnapshotId = snapshots[snapshots.length - 1].getSnapshotID();
 
-        Map<String, Integer> rangeParameters = new HashMap<>();
-        rangeParameters.put("lba", 0);
-        rangeParameters.put("blocks", 262144);
-
-        writeParameters.put("prefix", "hci-cl01-nhjj/" + volumeName + "-" + volumeId);
-        writeParameters.put("endpoint", "s3");
-        writeParameters.put("format", "native");
-
-        Map<String, Object> scriptParameters = new HashMap<>();
-        scriptParameters.put("range", rangeParameters);
-        scriptParameters.put("write", writeParameters);
+        final Map<String, Object> scriptParameters = buildScriptParameters(volumeId, volumeName, parameters, false);
 
         StartBulkVolumeReadRequest request = StartBulkVolumeReadRequest.builder()
-            .format("native")
+            .format(S3_FORMAT)
             .volumeID(volumeId)
             .optionalSnapshotID(latestSnapshotId)
             .optionalScript("bv_internal.py")
@@ -1026,6 +1039,21 @@ public class SolidFireUtil {
             .build();
 
         getSolidFireElement(sfConnection).startBulkVolumeRead(request);
+    }
+
+    public static void startBulkVolumeWrite(SolidFireConnection sfConnection, long volumeId,
+        String volumeName, final Map<String, String> parameters) {
+
+        final Map<String, Object> scriptParameters = buildScriptParameters(volumeId, volumeName, parameters, true);
+
+        StartBulkVolumeWriteRequest request = StartBulkVolumeWriteRequest.builder()
+            .format(S3_FORMAT)
+            .volumeID(volumeId)
+            .optionalScript("bv_internal.py")
+            .optionalScriptParameters(scriptParameters)
+            .build();
+
+        getSolidFireElement(sfConnection).startBulkVolumeWrite(request);
     }
 
     public static SolidFireSnapshot getSnapshot(SolidFireConnection sfConnection, long volumeId, long snapshotId) {
