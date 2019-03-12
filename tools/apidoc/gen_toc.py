@@ -140,7 +140,7 @@ known_categories = {
     'NiciraNvpDevice': 'Nicira NVP',
     'BrocadeVcsDevice': 'Brocade VCS',
     'BigSwitchBcfDevice': 'BigSwitch BCF',
-	'NuageVsp': 'Nuage VSP',
+    'NuageVsp': 'Nuage VSP',
     'AutoScale': 'AutoScale',
     'Counter': 'AutoScale',
     'Condition': 'AutoScale',
@@ -151,7 +151,7 @@ known_categories = {
     'removeIpFromNic': 'Nic',
     'updateVmNicIp': 'Nic',
     'listNics':'Nic',
-	'AffinityGroup': 'Affinity Group',
+    'AffinityGroup': 'Affinity Group',
     'addImageStore': 'Image Store',
     'listImageStore': 'Image Store',
     'deleteImageStore': 'Image Store',
@@ -159,8 +159,8 @@ known_categories = {
     'deleteSecondaryStagingStore': 'Image Store',
     'listSecondaryStagingStores': 'Image Store',
     'InternalLoadBalancer': 'Internal LB',
-	'DeploymentPlanners': 'Configuration',
-	'ObjectStore': 'Image Store',
+    'DeploymentPlanners': 'Configuration',
+    'ObjectStore': 'Image Store',
     'PortableIp': 'Portable IP',
     'dedicateHost': 'Dedicate Resources',
     'releaseDedicatedHost': 'Dedicate Resources',
@@ -190,7 +190,8 @@ known_categories = {
     'listElastistorInterface': 'Misc',
     'cloudian': 'Cloudian',
     'Sioc' : 'Sioc',
-    'Diagnostics': 'Diagnostics'
+    'Diagnostics': 'Diagnostics',
+    'listBackups': 'Backup'
     }
 
 

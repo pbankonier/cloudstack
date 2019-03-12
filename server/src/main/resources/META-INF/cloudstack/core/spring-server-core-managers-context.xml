@@ -259,6 +259,7 @@
     <bean id="ApplicationLoadBalancerService" class="org.apache.cloudstack.network.lb.ApplicationLoadBalancerManagerImpl" />
 
     <bean id="vMSnapshotManagerImpl" class="com.cloud.vm.snapshot.VMSnapshotManagerImpl" />
+    <bean id="backuptManagerImpl" class="com.cloud.vm.backup.BackupManagerImpl" />
 
     <bean id="AffinityGroupServiceImpl"
         class="org.apache.cloudstack.affinity.AffinityGroupServiceImpl">

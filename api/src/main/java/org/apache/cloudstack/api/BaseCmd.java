@@ -58,6 +58,7 @@ import com.cloud.utils.db.EntityManager;
 import com.cloud.utils.db.UUIDManager;
 import com.cloud.vm.UserVmService;
 import com.cloud.vm.snapshot.VMSnapshotService;
+import com.cloud.vm.backup.BackupService;
 import org.apache.cloudstack.acl.RoleService;
 import org.apache.cloudstack.acl.RoleType;
 import org.apache.cloudstack.affinity.AffinityGroupService;
@@ -171,6 +172,8 @@ public abstract class BaseCmd {
     public NetworkUsageService _networkUsageService;
     @Inject
     public VMSnapshotService _vmSnapshotService;
+    @Inject
+    public BackupService _BackupService;
     @Inject
     public DataStoreProviderApiService dataStoreProviderApiService;
     @Inject

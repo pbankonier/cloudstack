@@ -18,6 +18,7 @@
 package com.cloud.storage;
 
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.cloudstack.api.command.admin.storage.CancelPrimaryStorageMaintenanceCmd;
@@ -85,6 +86,8 @@ public interface StorageService {
     StoragePool updateStoragePool(UpdateStoragePoolCmd cmd) throws IllegalArgumentException;
 
     StoragePool getStoragePool(long id);
+
+    List<StoragePool> listStoragePools();
 
     boolean deleteImageStore(DeleteImageStoreCmd cmd);
 

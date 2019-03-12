@@ -469,6 +469,7 @@ import org.apache.cloudstack.api.command.user.vmgroup.CreateVMGroupCmd;
 import org.apache.cloudstack.api.command.user.vmgroup.DeleteVMGroupCmd;
 import org.apache.cloudstack.api.command.user.vmgroup.ListVMGroupsCmd;
 import org.apache.cloudstack.api.command.user.vmgroup.UpdateVMGroupCmd;
+import org.apache.cloudstack.api.command.user.backup.ListBackupCmd;
 import org.apache.cloudstack.api.command.user.vmsnapshot.CreateVMSnapshotCmd;
 import org.apache.cloudstack.api.command.user.vmsnapshot.DeleteVMSnapshotCmd;
 import org.apache.cloudstack.api.command.user.vmsnapshot.ListVMSnapshotCmd;
@@ -2904,6 +2905,7 @@ public class ManagementServerImpl extends ManagerBase implements ManagementServe
         cmdList.add(UpdateVpnCustomerGatewayCmd.class);
         cmdList.add(ListZonesCmd.class);
         cmdList.add(ListVMSnapshotCmd.class);
+        cmdList.add(ListBackupCmd.class);
         cmdList.add(CreateVMSnapshotCmd.class);
         cmdList.add(RevertToVMSnapshotCmd.class);
         cmdList.add(DeleteVMSnapshotCmd.class);

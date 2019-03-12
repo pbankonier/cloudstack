@@ -25,6 +25,8 @@ import com.cloud.storage.DataStoreRole;
 public interface DataStoreManager {
     DataStore getDataStore(long storeId, DataStoreRole role);
 
+    List<PrimaryDataStore> listPrimaryDataStores();
+
     DataStore getPrimaryDataStore(long storeId);
 
     DataStore getPrimaryDataStore(String storeUuid);

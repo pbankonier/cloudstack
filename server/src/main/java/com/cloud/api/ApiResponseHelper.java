@@ -16,6 +16,7 @@
 // under the License.
 package com.cloud.api;
 
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.cloud.utils.crypt.DBEncryptionUtil;
 import com.cloud.tags.dao.ResourceTagDao;
 import com.cloud.agent.api.VgpuTypesInfo;
@@ -199,6 +200,7 @@ import org.apache.cloudstack.api.response.AsyncJobResponse;
 import org.apache.cloudstack.api.response.AutoScalePolicyResponse;
 import org.apache.cloudstack.api.response.AutoScaleVmGroupResponse;
 import org.apache.cloudstack.api.response.AutoScaleVmProfileResponse;
+import org.apache.cloudstack.api.response.BackupResponse;
 import org.apache.cloudstack.api.response.CapabilityResponse;
 import org.apache.cloudstack.api.response.CapacityResponse;
 import org.apache.cloudstack.api.response.ClusterResponse;
@@ -621,6 +623,14 @@ public class ApiResponseHelper implements ResponseGenerator {
         vmSnapshotResponse.setType(vmSnapshot.getType().toString());
         vmSnapshotResponse.setObjectName("vmsnapshot");
         return vmSnapshotResponse;
+    }
+
+    @Override
+    public BackupResponse createBackupResponse(S3ObjectSummary backup) {
+      BackupResponse backupResponse = new BackupResponse();
+      backupResponse.setName(backup.getKey());
+      backupResponse.setObjectName("backup");
+      return backupResponse;
     }
 
     @Override

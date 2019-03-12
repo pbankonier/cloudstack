@@ -18,12 +18,13 @@
  */
 package org.apache.cloudstack.storage.datastore.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
 
 import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreProvider;
@@ -64,6 +65,16 @@ public class PrimaryDataStoreProviderManagerImpl implements PrimaryDataStoreProv
         DataStoreProvider provider = providerManager.getDataStoreProvider(providerName);
         PrimaryDataStoreImpl dataStore = PrimaryDataStoreImpl.createDataStore(dataStoreVO, driverMaps.get(provider.getName()), provider);
         return dataStore;
+    }
+
+    @Override
+    public List<PrimaryDataStore> listPrimaryDataStores() {
+      List <StoragePoolVO> dataStoreVOs = dataStoreDao.listAll();
+      List<PrimaryDataStore> dataStores = new ArrayList<>();
+      for (StoragePoolVO store : dataStoreVOs) {
+        dataStores.add(getPrimaryDataStore(store.getId()));
+      }
+      return dataStores;
     }
 
     @Override

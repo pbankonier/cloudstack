@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.apache.cloudstack.engine.subsystem.api.storage.DataStoreManager;
 import org.apache.cloudstack.engine.subsystem.api.storage.DataStore;
+import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStore;
 import org.apache.cloudstack.engine.subsystem.api.storage.ZoneScope;
 import org.apache.cloudstack.engine.subsystem.api.storage.Scope;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,11 @@ public class DataStoreManagerImpl implements DataStoreManager {
             throw e;
         }
         throw new CloudRuntimeException("un recognized type" + role);
+    }
+
+    @Override
+    public List<PrimaryDataStore> listPrimaryDataStores() {
+      return primaryStoreMgr.listPrimaryDataStores();
     }
 
     @Override

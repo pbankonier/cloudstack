@@ -22,8 +22,12 @@ import org.apache.cloudstack.engine.subsystem.api.storage.HypervisorHostListener
 import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStore;
 import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreDriver;
 
+import java.util.List;
+
 public interface PrimaryDataStoreProviderManager {
     public PrimaryDataStore getPrimaryDataStore(long dataStoreId);
+
+    public List<PrimaryDataStore> listPrimaryDataStores();
 
     public PrimaryDataStore getPrimaryDataStore(String uuid);
 

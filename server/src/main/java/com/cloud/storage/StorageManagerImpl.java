@@ -60,6 +60,7 @@ import org.apache.cloudstack.engine.subsystem.api.storage.HostScope;
 import org.apache.cloudstack.engine.subsystem.api.storage.HypervisorHostListener;
 import org.apache.cloudstack.engine.subsystem.api.storage.ImageStoreProvider;
 import org.apache.cloudstack.engine.subsystem.api.storage.ObjectInDataStoreStateMachine;
+import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStore;
 import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreDriver;
 import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreInfo;
 import org.apache.cloudstack.engine.subsystem.api.storage.PrimaryDataStoreLifeCycle;
@@ -1607,6 +1608,16 @@ public class StorageManagerImpl extends ManagerBase implements StorageManager, C
     @Override
     public PrimaryDataStoreInfo getStoragePool(long id) {
         return (PrimaryDataStoreInfo)_dataStoreMgr.getDataStore(id, DataStoreRole.Primary);
+    }
+
+    @Override
+    public List<StoragePool> listStoragePools(){
+      List<PrimaryDataStore> list = _dataStoreMgr.listPrimaryDataStores();
+      List<StoragePool> infos = new ArrayList<>();
+      for (PrimaryDataStore PrimaryDataStore : list) {
+        infos.add((StoragePool)_dataStoreMgr.getDataStore(PrimaryDataStore.getId(), DataStoreRole.Primary));
+      }
+      return infos;
     }
 
     @Override
