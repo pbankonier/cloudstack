@@ -2261,6 +2261,7 @@
                                         };
                                         $.ajax({
                                             url: createURL('listAccounts', {
+                                                details: 'min',
                                                 ignoreProject: true
                                             }),
                                             data: dataObj,
@@ -2294,6 +2295,7 @@
                                         var dataObj = {
                                             domainId: args.domainid,
                                             state: 'Active',
+                                            details: 'min',
                                             listAll: true,
                                         };
                                         $.ajax({
