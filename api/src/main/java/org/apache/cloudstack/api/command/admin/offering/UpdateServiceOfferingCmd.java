@@ -54,12 +54,19 @@ public class UpdateServiceOfferingCmd extends BaseCmd {
     @Parameter(name = ApiConstants.SORT_KEY, type = CommandType.INTEGER, description = "sort key of the service offering, integer")
     private Integer sortKey;
 
+    @Parameter(name = ApiConstants.IS_DEFAULT_USE, type = CommandType.BOOLEAN, required = false, description = "set offering as a default one")
+    private Boolean defaultUse;
+
     /////////////////////////////////////////////////////
     /////////////////// Accessors ///////////////////////
     /////////////////////////////////////////////////////
 
     public String getDisplayText() {
         return displayText;
+    }
+
+    public Boolean getDefaultUse() {
+        return defaultUse;
     }
 
     public Long getId() {

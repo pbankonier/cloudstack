@@ -104,6 +104,66 @@ public class Storage {
         }
     }
 
+    public static enum SOUniqueName {
+      CONSOLEPROXY("Cloud.com-ConsoleProxy"),
+      CONSOLEPROXY_LOCAL("Cloud.com-ConsoleProxy-Local"),
+      SECONDARYSTORAGE("Cloud.com-SecondaryStorage"),
+      SECONDARYSTORAGE_LOCAL("Cloud.com-SecondaryStorage-Local"),
+      INTERNALLBVM("Cloud.Com-InternalLBVm"),
+      INTERNALLBVM_LOCAL("Cloud.Com-InternalLBVm-Local"),
+      ELASTICLBVM("Cloud.Com-ElasticLBVm"),
+      ELASTICLBVM_LOCAL("Cloud.Com-ElasticLBVm-Local"),
+      SOFTWAREROUTER("Cloud.Com-SoftwareRouter"),
+      SOFTWAREROUTER_LOCAL("Cloud.Com-SoftwareRouter-Local");
+
+      private final String uniqueName;
+
+      private SOUniqueName(String uniqueName){
+        this.uniqueName = uniqueName;
+      }
+
+      public String toString(){
+        return this.uniqueName;
+      }
+
+      public static SOUniqueName getDefaultUseUniqueName(String systemVMType, boolean isLocal){
+        switch(systemVMType.toLowerCase()){
+          case "domainrouter":
+            if(isLocal){
+              return SOUniqueName.SOFTWAREROUTER_LOCAL;
+            } else {
+              return SOUniqueName.SOFTWAREROUTER;
+            }
+          case "consoleproxy":
+            if(isLocal){
+              return SOUniqueName.CONSOLEPROXY_LOCAL;
+            } else {
+              return SOUniqueName.CONSOLEPROXY;
+            }
+          case "secondarystoragevm":
+            if(isLocal){
+              return SOUniqueName.SECONDARYSTORAGE_LOCAL;
+            } else {
+              return SOUniqueName.SECONDARYSTORAGE;
+            }
+          case "internalloadbalancervm":
+            if(isLocal){
+              return SOUniqueName.INTERNALLBVM_LOCAL;
+            } else {
+              return SOUniqueName.INTERNALLBVM;
+            }
+          case "elasticloadbalancervm":
+            if(isLocal){
+              return SOUniqueName.ELASTICLBVM_LOCAL;
+            } else {
+              return SOUniqueName.ELASTICLBVM;
+            }
+          default:
+            throw new NotImplementedException();
+        }
+      }
+    }
+
     public static enum FileSystem {
         Unknown, ext3, ntfs, fat, fat32, ext2, ext4, cdfs, hpfs, ufs, hfs, hfsp
     }

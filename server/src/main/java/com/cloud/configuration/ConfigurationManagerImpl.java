@@ -193,6 +193,7 @@ import com.cloud.service.dao.ServiceOfferingDao;
 import com.cloud.service.dao.ServiceOfferingDetailsDao;
 import com.cloud.storage.DiskOfferingVO;
 import com.cloud.storage.Storage.ProvisioningType;
+import com.cloud.storage.Storage.SOUniqueName;
 import com.cloud.storage.StorageManager;
 import com.cloud.storage.dao.DiskOfferingDao;
 import com.cloud.storage.dao.VolumeDao;
@@ -2326,9 +2327,11 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                 vmType = VirtualMachine.Type.SecondaryStorageVm;
             } else if (VirtualMachine.Type.InternalLoadBalancerVm.toString().toLowerCase().equals(vmTypeString)) {
                 vmType = VirtualMachine.Type.InternalLoadBalancerVm;
+            } else if (VirtualMachine.Type.ElasticLoadBalancerVm.toString().toLowerCase().equals(vmTypeString)) {
+                vmType = VirtualMachine.Type.ElasticLoadBalancerVm;
             } else {
                 throw new InvalidParameterValueException("Invalid systemVmType. Supported types are: " + VirtualMachine.Type.DomainRouter + ", " + VirtualMachine.Type.ConsoleProxy
-                        + ", " + VirtualMachine.Type.SecondaryStorageVm);
+                        + ", " + VirtualMachine.Type.SecondaryStorageVm + ", " + VirtualMachine.Type.InternalLoadBalancerVm + ", " + VirtualMachine.Type.ElasticLoadBalancerVm);
             }
 
             if (cmd.isCustomizedIops() != null) {
@@ -2365,8 +2368,13 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             }
         }
 
+        boolean defaultUse = false;
+        if (cmd.getDefaultUse() != null) {
+          defaultUse = cmd.getDefaultUse();
+        }
+
         return createServiceOffering(userId, cmd.isSystem(), vmType, cmd.getServiceOfferingName(), cpuNumber, memory, cpuSpeed, cmd.getDisplayText(),
-                cmd.getProvisioningType(), localStorageRequired, offerHA, limitCpuUse, volatileVm, cmd.getTags(), cmd.getDomainId(), cmd.getHostTag(),
+                cmd.getProvisioningType(), defaultUse, localStorageRequired, offerHA, limitCpuUse, volatileVm, cmd.getTags(), cmd.getDomainId(), cmd.getHostTag(),
                 cmd.getNetworkRate(), cmd.getDeploymentPlanner(), details, isCustomizedIops, cmd.getMinIops(), cmd.getMaxIops(),
                 cmd.getBytesReadRate(), cmd.getBytesReadRateMax(), cmd.getBytesReadRateMaxLength(),
                 cmd.getBytesWriteRate(), cmd.getBytesWriteRateMax(), cmd.getBytesWriteRateMaxLength(),
@@ -2376,7 +2384,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
     }
 
     protected ServiceOfferingVO createServiceOffering(final long userId, final boolean isSystem, final VirtualMachine.Type vmType,
-            final String name, final Integer cpu, final Integer ramSize, final Integer speed, final String displayText, final String provisioningType, final boolean localStorageRequired,
+            final String name, final Integer cpu, final Integer ramSize, final Integer speed, final String displayText, final String provisioningType, boolean defaultUse, final boolean localStorageRequired,
             final boolean offerHA, final boolean limitResourceUse, final boolean volatileVm,  String tags, final Long domainId, final String hostTag,
             final Integer networkRate, final String deploymentPlanner, final Map<String, String> details, final Boolean isCustomizedIops, Long minIops, Long maxIops,
             Long bytesReadRate, Long bytesReadRateMax, Long bytesReadRateMaxLength,
@@ -2406,11 +2414,12 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         }
 
         final ProvisioningType typedProvisioningType = ProvisioningType.getProvisioningType(provisioningType);
+        String uniqueName = defaultUse ? SOUniqueName.getDefaultUseUniqueName(vmType.toString(), localStorageRequired).toString() : null;
 
         tags = StringUtils.cleanupTags(tags);
 
         ServiceOfferingVO offering = new ServiceOfferingVO(name, cpu, ramSize, speed, networkRate, null, offerHA,
-                limitResourceUse, volatileVm, displayText, typedProvisioningType, localStorageRequired, false, tags, isSystem, vmType,
+                limitResourceUse, volatileVm, displayText, typedProvisioningType, uniqueName, localStorageRequired, false, tags, isSystem, vmType,
                 domainId, hostTag, deploymentPlanner);
 
         if (Boolean.TRUE.equals(isCustomizedIops) || isCustomizedIops == null) {
@@ -2439,6 +2448,7 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         offering.setCustomizedIops(isCustomizedIops);
         offering.setMinIops(minIops);
         offering.setMaxIops(maxIops);
+        offering.setDefaultUse(defaultUse);
 
         if (bytesReadRate != null && bytesReadRate > 0) {
             offering.setBytesReadRate(bytesReadRate);
@@ -2516,6 +2526,10 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
                 detailsVO.add(new ServiceOfferingDetailsVO(offering.getId(), detailEntry.getKey(), detailEntryValue, true));
             }
         }
+        long removedServiceOfferingId = 0;
+        if(defaultUse){
+          removedServiceOfferingId = _serviceOfferingDao.removeUniqueName(uniqueName);
+        }
 
         if ((offering = _serviceOfferingDao.persist(offering)) != null) {
             if (detailsVO != null && !detailsVO.isEmpty()) {
@@ -2527,6 +2541,9 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
             CallContext.current().setEventDetails("Service offering id=" + offering.getId());
             return offering;
         } else {
+            if (removedServiceOfferingId != 0){
+              _serviceOfferingDao.resetUniqueName(removedServiceOfferingId, uniqueName);
+            }
             return null;
         }
     }
@@ -2542,6 +2559,10 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
 
         if (userId == null) {
             userId = Long.valueOf(User.UID_SYSTEM);
+        }
+        boolean defaultUse = false;
+        if(cmd.getDefaultUse() != null){
+          defaultUse = cmd.getDefaultUse();
         }
 
         // Verify input parameters
@@ -2610,11 +2631,23 @@ public class ConfigurationManagerImpl extends ManagerBase implements Configurati
         // }
         // }
 
-        if (_serviceOfferingDao.update(id, offering)) {
+      final boolean wasDefault = offering.getDefaultUse();
+      long removedServiceOfferingId = 0;
+      String uniqueName = defaultUse ? SOUniqueName.getDefaultUseUniqueName(offeringHandle.getSystemVmType(), offeringHandle.isUseLocalStorage()).toString() : null;
+      offering.setUniqueName(uniqueName);
+      offering.setDefaultUse(defaultUse);
+      if(defaultUse && !wasDefault) {
+        removedServiceOfferingId = _serviceOfferingDao.removeUniqueName(uniqueName);
+      }
+
+      if (_serviceOfferingDao.update(id, offering)) {
             offering = _serviceOfferingDao.findById(id);
             CallContext.current().setEventDetails("Service offering id=" + offering.getId());
             return offering;
         } else {
+            if(removedServiceOfferingId != 0){
+              _serviceOfferingDao.resetUniqueName(removedServiceOfferingId, uniqueName);
+            }
             return null;
         }
     }
