@@ -2336,9 +2336,15 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
             // if params contains a rootDiskController key, use its value (this is what other HVs are doing)
             DiskDef.DiskBus diskBusType = getDiskModelFromVMDetail(vmSpec);
-
             if (diskBusType == null) {
-                diskBusType = getGuestDiskModel(vmSpec.getPlatformEmulator());
+                // always use bus type ide for windows root volumes and virtio for data volumes unless specified in vm details or windows pv is selected
+                if (volume.getType() == Volume.Type.ROOT && vmSpec.getPlatformEmulator().startsWith("Windows") && !vmSpec.getPlatformEmulator().startsWith("Windows PV")){
+                    diskBusType = DiskDef.DiskBus.IDE;
+                } else if (volume.getType() == Volume.Type.DATADISK && vmSpec.getPlatformEmulator().startsWith("Windows")) {
+                    diskBusType = DiskDef.DiskBus.VIRTIO;
+                } else {
+                    diskBusType = getGuestDiskModel(vmSpec.getPlatformEmulator());
+                }
             }
 
             // I'm not sure why previously certain DATADISKs were hard-coded VIRTIO and others not, however this
@@ -3194,12 +3200,15 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
             return DiskDef.DiskBus.IDE;
         } else if (platformEmulator.startsWith("Other PV Virtio-SCSI")) {
             return DiskDef.DiskBus.SCSI;
-        } else if (platformEmulator.startsWith("Ubuntu") || platformEmulator.startsWith("Fedora 13") || platformEmulator.startsWith("Fedora 12") || platformEmulator.startsWith("Fedora 11") ||
-                platformEmulator.startsWith("Fedora 10") || platformEmulator.startsWith("Fedora 9") || platformEmulator.startsWith("CentOS 5.3") || platformEmulator.startsWith("CentOS 5.4") ||
-                platformEmulator.startsWith("CentOS 5.5") || platformEmulator.startsWith("CentOS") || platformEmulator.startsWith("Fedora") ||
-                platformEmulator.startsWith("Red Hat Enterprise Linux 5.3") || platformEmulator.startsWith("Red Hat Enterprise Linux 5.4") ||
-                platformEmulator.startsWith("Red Hat Enterprise Linux 5.5") || platformEmulator.startsWith("Red Hat Enterprise Linux 6") || platformEmulator.startsWith("Debian GNU/Linux") ||
-                platformEmulator.startsWith("FreeBSD 10") || platformEmulator.startsWith("Oracle") || platformEmulator.startsWith("Other PV")) {
+        } else if (platformEmulator.startsWith("Ubuntu") ||
+                platformEmulator.startsWith("Fedora") ||
+                platformEmulator.startsWith("CentOS") ||
+                platformEmulator.startsWith("Red Hat Enterprise Linux") ||
+                platformEmulator.startsWith("Debian GNU/Linux") ||
+                platformEmulator.startsWith("FreeBSD") ||
+                platformEmulator.startsWith("Oracle") ||
+                platformEmulator.startsWith("Windows PV") ||
+                platformEmulator.startsWith("Other PV")) {
             return DiskDef.DiskBus.VIRTIO;
         } else {
             return DiskDef.DiskBus.IDE;
