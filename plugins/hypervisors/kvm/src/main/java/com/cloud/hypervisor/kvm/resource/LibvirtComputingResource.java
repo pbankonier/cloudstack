@@ -1391,7 +1391,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         final Script command = new Script(_patchScriptPath, 300 * 1000, s_logger);
         String result;
         command.add("-n", vmName);
-        command.add("-c", cmdLine);
+        command.add("-p", cmdLine.replace(' ', '%'));
         result = command.execute();
         if (result != null) {
             s_logger.error("Passing cmdline failed:" + result);
@@ -2954,7 +2954,7 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
                         final int vnetId = Integer.parseInt(nic.getBrName().replaceFirst("cloudVirBr", ""));
                         final String pifName = getPif(_guestBridgeName);
                         final String newBrName = "br" + pifName + "-" + vnetId;
-                        vmDef = vmDef.replaceAll("'" + nic.getBrName() + "'", "'" + newBrName + "'");
+                        vmDef = vmDef.replace("'" + nic.getBrName() + "'", "'" + newBrName + "'");
                         s_logger.debug("VM bridge name is changed from " + nic.getBrName() + " to " + newBrName);
                     } catch (final NumberFormatException e) {
                         continue;
