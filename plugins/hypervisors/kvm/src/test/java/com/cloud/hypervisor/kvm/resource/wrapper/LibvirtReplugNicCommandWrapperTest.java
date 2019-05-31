@@ -52,7 +52,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.naming.ConfigurationException;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {Script.class, MemStat.class})
 public class LibvirtReplugNicCommandWrapperTest {

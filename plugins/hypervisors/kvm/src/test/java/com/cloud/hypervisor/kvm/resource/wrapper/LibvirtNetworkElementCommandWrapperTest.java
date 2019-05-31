@@ -43,8 +43,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.naming.ConfigurationException;
-
 import java.util.Scanner;
 
 @RunWith(PowerMockRunner.class)
