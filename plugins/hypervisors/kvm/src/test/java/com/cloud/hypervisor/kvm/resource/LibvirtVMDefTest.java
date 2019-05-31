@@ -92,7 +92,7 @@ public class LibvirtVMDefTest extends TestCase {
     @Test
     public void testInterfaceBridgeSlot() {
         LibvirtVMDef.InterfaceDef ifDef = new LibvirtVMDef.InterfaceDef();
-        ifDef.defBridgeNet("targetDeviceName", null, "00:11:22:aa:bb:dd", LibvirtVMDef.InterfaceDef.NicModel.VIRTIO, 1500);
+        ifDef.defBridgeNet("targetDeviceName", null, "00:11:22:aa:bb:dd", LibvirtVMDef.InterfaceDef.NicModel.VIRTIO, 0, 1500);
         ifDef.setSlot(16);
 
         String expected =
