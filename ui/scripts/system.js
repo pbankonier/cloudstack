@@ -2828,6 +2828,9 @@
                                                     isolationuri: {
                                                         label: 'label.isolation.uri'
                                                     },
+                                                    mtu: {
+                                                        label: 'label.mtu'
+                                                    },
                                                     broadcasturi: {
                                                         label: 'label.broadcast.uri'
                                                     }
@@ -3371,6 +3374,9 @@
                                                     },
                                                     isolationuri: {
                                                         label: 'label.isolation.uri'
+                                                    },
+                                                    mtu: {
+                                                        label: 'label.mtu'
                                                     },
                                                     broadcasturi: {
                                                         label: 'label.broadcast.uri'
@@ -6890,6 +6896,9 @@
                                                     },
                                                     isolationuri: {
                                                         label: 'label.isolation.uri'
+                                                    },
+                                                    mtu: {
+                                                        label: 'label.mtu'
                                                     },
                                                     broadcasturi: {
                                                         label: 'label.broadcast.uri'
@@ -10548,6 +10557,9 @@
                                             },
                                             isolationuri: {
                                                 label: 'label.isolation.uri'
+                                            },
+                                            mtu: {
+                                                label: 'label.mtu'
                                             },
                                             broadcasturi: {
                                                 label: 'label.broadcast.uri'

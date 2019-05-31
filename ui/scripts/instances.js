@@ -848,6 +848,10 @@
                         hiddenTabs.push("securityGroups");
                     }
 
+					if (args.context.instances[0].state == 'Running') {
+						hiddenTabs.push("settings");
+					}
+
                     return hiddenTabs;
                 },
                 actions: {
@@ -2435,7 +2439,7 @@
                                 $.extend(dataObj, {
                                     networkIds: args.data.network
                                 });
-                            } 
+                            }
                             if (args.data.securitygroup != null && args.data.securitygroup != '') {
                                 $.extend(dataObj, {
                                     securitygroupIds: args.data.securitygroup
@@ -2800,17 +2804,29 @@
                                                 required: false,
                                                 ipv4: true
                                             }
+                                        },
+                                        mtu: {
+                                            label: 'label.mtu',
+                                            validation: {
+                                                number: true,
+                                                min: 1280,
+                                                max: 9216
+                                            }
                                         }
                                     }
                                 },
                                 action: function(args) {
                                     var dataObj = {
                                         virtualmachineid: args.context.instances[0].id,
-                                        networkid: args.data.networkid,
+                                        networkid: args.data.networkid
                                     };
 
                                     if (args.data.ipaddress) {
                                         dataObj.ipaddress = args.data.ipaddress;
+                                    }
+
+                                    if (args.data.mtu) {
+                                        dataObj.mtu = args.data.mtu;
                                     }
 
                                     $.ajax({
@@ -2929,12 +2945,21 @@
                                                     });
                                                 }
                                             }
-                                        }
+                                        },
+                                      mtu: {
+                                        label: 'label.mtu',
+                                          validation: {
+                                              number: true,
+                                              min: 1280,
+                                              max: 9216
+                                          }
+                                      }
                                     }
                                 },
                                 action: function(args) {
                                     var dataObj = {
-                                        nicId: args.context.nics[0].id
+                                        nicId: args.context.nics[0].id,
+                                        mtu: args.data.mtu
                                     };
 
                                     if (args.data.ipaddress1) {
@@ -3059,6 +3084,9 @@
                                 converter: function(data) {
                                     return data ? _l('label.yes') : _l('label.no');
                                 }
+                            },
+                            mtu : {
+                                label: 'label.mtu'
                             }
                         }],
                         viewAll: {
@@ -3201,7 +3229,7 @@
                             });
                         }
                     },
-					
+
 					/**
                      * Settings tab
                      */
@@ -3311,7 +3339,7 @@
 											args.response.error(parseXMLHttpResponse(json));
 										}
 									});
-                                    if (virtualMachine && virtualMachine.state == "Stopped") {
+if (virtualMachine && virtualMachine.state == "Stopped") {
                                         // It could happen that a stale web page has been opened up when VM was stopped but
                                         // vm was turned on through another route - UI or API. so we should check again.
                                         var detailToDelete = args.data.jsonObj.name;
@@ -3349,7 +3377,7 @@
 								add: function(args) {
 									var name = args.data.name;
 									var value = args.data.value;
-									
+
 									var details;
 									$.ajax({
 										url: createURL('listVirtualMachines&id=' + args.context.instances[0].id),
@@ -3363,7 +3391,7 @@
 											args.response.error(parseXMLHttpResponse(json));
 										}
 									});
-									
+
 									var detailsFormat = '';
 									for (key in details) {
 										detailsFormat += "details[0]." + key + "=" + details[key] + "&";
@@ -3391,7 +3419,7 @@
             }
         }
     };
-	
+
 	var parseDetails = function(details) {
 		var listDetails = [];
 		for (detail in details){
