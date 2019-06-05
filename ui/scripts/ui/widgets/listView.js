@@ -180,6 +180,11 @@
                         response: {
                             success: function(args) {
                                 args = args ? args : {};
+                                if(args.noLoading){
+                                  $('div.loading-overlay').remove();
+                                  toggleMultiSelectActions($listView, true);
+                                  return;
+                                }
 
                                 var $prevRow, $newRow;
 
@@ -1194,7 +1199,7 @@
                         var numRowsChecked = $(this).parents('tbody').find('input.multiSelectCheckbox:checked').length;
                         var enabled = checked || (numRowsChecked > 0);
 
-                        toggleMultiSelectActions($td.closest('.list-view'), enabled);
+                        toggleMultiSelectActions($(this).closest('.list-view'), enabled);
 
                         $td.closest('.list-view').find('input.multiSelectMasterCheckbox').attr('checked', (numRows === numRowsChecked));
                     });
@@ -1926,7 +1931,7 @@
             }
         }
 
-        // List view header actions
+        // List view header actionsList view header actions
         if (listViewData.actions) {
             $.each(listViewData.actions, function(actionName, action) {
                 var preFilter = function(extendContext) {
@@ -2478,7 +2483,7 @@
                 return true;
             }).show();
         }
-    }
+    };
 
     $.fn.listView = function(args, options) {
         if (!options) options = {};

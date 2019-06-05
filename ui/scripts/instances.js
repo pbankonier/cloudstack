@@ -88,6 +88,12 @@
                 hostid: args.data.hostId
               });
             }
+            if (instance.state === 'Running'){
+              args.response.success({
+                noLoading: true
+              });
+              return;
+            }
             $.ajax({
               url: createURL("startVirtualMachine"),
               data: data,
